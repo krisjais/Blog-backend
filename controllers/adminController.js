@@ -33,6 +33,14 @@ exports.approveBlog = async (req, res, next) => {
       { new: true }
     ).populate('author', 'name email');
     if (!blog) return res.status(404).json({ success: false, message: 'Blog not found' });
+
+    // Trigger Next.js revalidation
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+    try {
+      await fetch(`${clientUrl}/api/revalidate?secret=${process.env.REVALIDATE_SECRET || 'bloghub'}&path=/`);
+      await fetch(`${clientUrl}/api/revalidate?secret=${process.env.REVALIDATE_SECRET || 'bloghub'}&path=/blogs`);
+    } catch (_) { /* revalidation is best-effort */ }
+
     res.json({ success: true, blog });
   } catch (error) {
     next(error);

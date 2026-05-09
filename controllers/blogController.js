@@ -32,7 +32,19 @@ exports.getBlogs = async (req, res, next) => {
 // @desc  Get single blog by slug
 exports.getBlogBySlug = async (req, res, next) => {
   try {
-    const blog = await Blog.findOne({ slug: req.params.slug, status: 'approved' }).populate('author', 'name avatar bio');
+    // Allow author to preview their own non-approved blogs via ?preview=true
+    let blog;
+    if (req.query.preview === 'true' && req.headers.authorization) {
+      const jwt = require('jsonwebtoken');
+      try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        blog = await Blog.findOne({ slug: req.params.slug, author: decoded.id }).populate('author', 'name avatar bio');
+      } catch (_) {}
+    }
+    if (!blog) {
+      blog = await Blog.findOne({ slug: req.params.slug, status: 'approved' }).populate('author', 'name avatar bio');
+    }
     if (!blog) return res.status(404).json({ success: false, message: 'Blog not found' });
 
     blog.views += 1;
