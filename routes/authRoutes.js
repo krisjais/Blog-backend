@@ -4,16 +4,19 @@ const { register, login, getMe, updateProfile, updateAvatar } = require('../cont
 const { protect } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const { body } = require('express-validator');
+const validateRequest = require('../middleware/validateRequest');
 
 const validateRegister = [
   body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 50 }),
   body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  validateRequest
 ];
 
 const validateLogin = [
   body('email').isEmail().normalizeEmail(),
-  body('password').notEmpty(),
+  body('password').notEmpty().withMessage('Password is required'),
+  validateRequest
 ];
 
 router.post('/register', validateRegister, register);
