@@ -15,9 +15,9 @@ const app = express();
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
 
-// Rate limiting
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: 'Too many requests' });
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, message: 'Too many auth attempts' });
+// Rate limiting (disabled in development for easier testing)
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: 'Too many requests', skip: () => process.env.NODE_ENV === 'development' });
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, message: 'Too many auth attempts', skip: () => process.env.NODE_ENV === 'development' });
 app.use('/api/', limiter);
 app.use('/api/auth', authLimiter);
 

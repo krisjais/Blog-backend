@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 
 mongoose.connect(process.env.MONGODB_URI).then(async () => {
-  const email = 'visheshjaiswar009@gmail.com';
+  const email = 'ramzan@gmail.com';
 
   let user = await User.findOne({ email });
 
@@ -15,7 +15,7 @@ mongoose.connect(process.env.MONGODB_URI).then(async () => {
     user = await User.create({
       name: 'Admin',
       email,
-      password: '123@kris',
+      password: 'ramzan@123!',
       role: 'admin',
     });
     console.log(`✓ Admin user created: ${user.email}`);

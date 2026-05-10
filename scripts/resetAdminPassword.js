@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 mongoose.connect(process.env.MONGODB_URI).then(async () => {
-  const hash = await bcrypt.hash('123@kris', 12);
+  const hash = await bcrypt.hash('ramzan@123!', 12);
   const result = await mongoose.connection.collection('users').updateOne(
-    { email: 'visheshjaiswar@gmail.com' },
+    { email: 'ramzan@gmail.com' },
     { $set: { password: hash, role: 'admin', isActive: true } }
   );
   console.log('Updated:', result.modifiedCount, 'document(s)');
